@@ -15,7 +15,12 @@ _TIME_LIMIT_IN_SECONDS = 60
 
 
 def main():
-    tweets = json_helper.parse_tweets_hashtag_and_created_at_time(sys.argv[1])
+    request1 = json_helper.JsonRequest(CONST_JSON_CREATED_AT, [CONST_JSON_CREATED_AT])
+    request2 = json_helper\
+        .JsonRequestList(CONST_JSON_HASHTAGS,
+                         [json_helper.CONST_JSON_ENTITIES, CONST_JSON_HASHTAGS, json_helper.CONST_JSON_TEXT],
+                         to_lower=True, make_ascii=True, make_unique=True, min_length=2)
+    tweets = json_helper.parse_tweets(sys.argv[1], [request1, request2])
     sorted_tweets = sorted(tweets, key=lambda t: t[CONST_JSON_CREATED_AT])
 
     # deque to check for how many edges to remove when adding new tweet.

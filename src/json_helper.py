@@ -9,60 +9,99 @@ CONST_JSON_HASHTAG_TEXT = "text"
 _Assignment = Enum("Assignment", "filter_unicode avg_hashtag_graph")
 
 
-def parse_tweets_text_and_created_at_time(filename):
-    return parse_tweets(filename, {CONST_JSON_CREATED_AT: [CONST_JSON_CREATED_AT],
-                                   CONST_JSON_TEXT: [CONST_JSON_TEXT]}, _Assignment.filter_unicode)
+class JsonRequest:
+    def __init__(self, key, json_chain, to_lower=False, make_ascii=False):
+        self.key = key
+        self.json_chain = json_chain
+        self.to_lower = to_lower
+        self.make_ascii = make_ascii
+
+class JsonRequestList(JsonRequest):
+    def __init__(self, key, json_chain, to_lower=False, make_ascii=False, make_unique=False, min_length=1):
+        JsonRequest.__init__(self, key, json_chain, to_lower, make_ascii)
+        self.make_unique = make_unique
+        self.min_length = min_length
 
 
 def parse_tweets_hashtag_and_created_at_time(filename):
-    return parse_tweets(filename, {CONST_JSON_CREATED_AT: [CONST_JSON_CREATED_AT],
-                                   CONST_JSON_HASHTAGS: [CONST_JSON_ENTITIES, CONST_JSON_HASHTAGS]},
-                        _Assignment.avg_hashtag_graph)
+    request1 = JsonRequest(CONST_JSON_CREATED_AT, [CONST_JSON_CREATED_AT])
+    request2 = JsonRequestList(CONST_JSON_HASHTAGS, [CONST_JSON_ENTITIES, CONST_JSON_HASHTAGS, CONST_JSON_TEXT],
+                               to_lower=True, make_unique=True, min_length=2)
+    return parse_tweets(filename, [request1, request2])
 
 
-def parse_tweets(filename, json_fields_dict, assignment):
+def parse_tweets(filename, requests_list):
     with open(filename) as tweet_file:
         tweets = []
         for line in tweet_file:
             tweet_json = json.loads(line)
-            json_fields_dict_values = json_fields_dict.values()
-            # if False in is_wellformed_json_generator(tweet_json, json_fields_dict_values):
-            #     continue
-
             tweet = {}
-            # since we only need these two fields, only save these two to save space.
-            if assignment == _Assignment.filter_unicode:
-                try:
-                    for key, value in json_fields_dict.iteritems():
-                        tweet[key] = nested_json_fields_value(tweet_json, value)
-                except ValueError: #usually happens if some tweet doesn't have the right keys. Can skip.
-                    continue
-
-            elif assignment == _Assignment.avg_hashtag_graph:
-                hashtags = set()  # set to ensure uniqness.
-                tweet[CONST_JSON_CREATED_AT] = tweet_json[CONST_JSON_CREATED_AT]
-                print type(tweet_json[CONST_JSON_ENTITIES][CONST_JSON_HASHTAGS])
-                for inner_hashtag_object in tweet_json[CONST_JSON_ENTITIES][CONST_JSON_HASHTAGS]:
-                    decoded_string = inner_hashtag_object[CONST_JSON_HASHTAG_TEXT]\
-                        .encode('ascii', errors='ignore').lower()
-                    hashtags.add(decoded_string)
-
-                # if less than 2 unique hashtags, don't add it.
-                if len(hashtags) < 2:
-                    continue
-                tweet[CONST_JSON_HASHTAGS] = hashtags
-            else:
-                raise ValueError("Wrong input assignment for parse_tweets")
-
-            tweets.append(tweet)
+            try:
+                for request in requests_list:
+                    value = nested_json_fields_value(tweet_json, request.json_chain)
+                    value = format_value(value, request)
+                    tweet[request.key] = value
+                tweets.append(tweet)
+            except ValueError:  # usually happens if some tweet doesn't have the right keys or lists to add
+                                # don't have the required length. Can skip.
+                continue
 
         return tweets
 
-#TODO: Since clean for both number 1 and number 2 should probably move it here.
+
+
+def format_value(value, request):
+    if request.__class__ == JsonRequest:
+        return format_primitive_value(value, request)
+    elif request.__class__ == JsonRequestList:
+        return format_list_value(value, request)
+    else:
+        raise ValueError("Got an odd JSON request.")
+
+
+def format_list_value(list, request):
+    placeholder_list = []
+    for value in list:
+        placeholder_list.append(format_primitive_value(value, request))
+
+    if request.make_unique:
+        placeholder_list = make_unique(placeholder_list)
+
+    if len(placeholder_list) < request.min_length:
+        raise ValueError("List doesn't contain minimum amount of elements needed to be added.")
+    return placeholder_list
+
+
+def format_primitive_value(value, request):
+    if isinstance(value, basestring):
+        if request.to_lower:
+            value = value.lower()
+        if request.make_ascii:
+            value = make_ascii(value)
+
+    return value
+
+
+# TODO: test this funciton.
+def make_unique(input_list):
+    placeholder_set = set()
+    try:
+        for item in input_list:
+            placeholder_set.add(item)
+    except TypeError:
+        raise TypeError("Could not make elements in list unique. "
+                        "This is usually because the elements are not hashtable.")
+
+    return list(placeholder_set)
+
+
+def make_ascii(text):
+    return text.encode('ascii', errors='ignore')
+
 
 def nested_json_fields_value(tweet_json, nested_json_fields):
     if not nested_json_fields:
-        raise LookupError("Got a malformed json key list")
+        raise LookupError("Got a malformed json key list: list did not conclude with value.")
 
     value = tweet_json.get(nested_json_fields[0])
 
@@ -73,26 +112,12 @@ def nested_json_fields_value(tweet_json, nested_json_fields):
     elif type(value) == list and type(value[0]) == dict:  # array of nested json objects, recurse.
         response_list = []
         for item in value:
-            response_list.append(nested_json_fields(item, nested_json_fields[1:]))
+            response_list.append(nested_json_fields_value(item, nested_json_fields[1:]))
         return response_list
-    else:  # anything else is the correct response. 
-        return value
+    else:  # candidates for return
+        if nested_json_fields[1:]:
+            # still have unused fields in nested_json_fields, so should raise error.
+            raise LookupError("Could not finish json key lookup chain: found value before list concluded.")
+        else:
+            return value
 
-
-# def nested_json_fields_value(tweet_json, nested_json_fields):
-#     for field in nested_json_fields:
-#         tweet_json = tweet_json[field]
-#     return tweet_json
-
-
-def is_wellformed_json_generator(tweet_json, nested_json_fields_list):
-    for nested_json_fields in nested_json_fields_list:
-        yield json_contains_field(tweet_json, nested_json_fields)
-
-
-def json_contains_field(tweet_json, nested_json_fields):
-    for field in nested_json_fields:
-        if field not in tweet_json:
-            return False
-        tweet_json = tweet_json[field]
-    return True
