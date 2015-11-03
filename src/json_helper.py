@@ -9,6 +9,8 @@ CONST_JSON_HASHTAG_TEXT = "text"
 _Assignment = Enum("Assignment", "filter_unicode avg_hashtag_graph")
 
 
+
+# todo: make these two subclass of something else
 class JsonRequest:
     def __init__(self, key, json_chain, to_lower=False, make_ascii=False):
         self.key = key
@@ -39,10 +41,6 @@ def parse_tweets(filename, requests_list):
                     break
 
                 value = format_value(value, request)
-                if not value_is_acceptable(value, request):
-                    ignore_tweet = True
-                    break
-
                 tweet[request.key] = value
 
             if ignore_tweet:
@@ -51,7 +49,6 @@ def parse_tweets(filename, requests_list):
                 tweets.append(tweet)
 
         return tweets
-
 
 
 def format_value(value, request):
@@ -111,10 +108,12 @@ def nested_json_fields_value(tweet_json, nested_json_fields):
     if not nested_json_fields:
         raise LookupError("Got a malformed json key list: list did not conclude with value.")
 
-    value = tweet_json.get(nested_json_fields[0])
+    if nested_json_fields[0] not in tweet_json:  # empty json key. might just be malformed tweet, skip.
+        raise ValueError("Could not find field in JSON. Skipping tweet")
 
-    if not value:  # empty json key. might just be malformed tweet, skip.
-        raise ValueError
+    value = tweet_json.get(nested_json_fields[0])
+    if not value:  # If empty no need to process more.
+        return value
     elif type(value) == dict:  # nested json object, recurse.
         return nested_json_fields_value(value, nested_json_fields[1:])
     elif type(value) == list and type(value[0]) == dict:  # array of nested json objects, recurse.

@@ -29,18 +29,25 @@ def main():
 
     graph = networkx.Graph()
     for tweet in sorted_tweets:
-        for x, y in itertools.combinations(tweet[CONST_JSON_HASHTAGS], 2):
-            increment_edge(x, y, graph)
+        # since the hashtags have been encoded to ascii and made unique, this should only increment the edge
+        # if and only if tweet had set of >=2 hashtags.
+        if len(tweet.get(CONST_JSON_HASHTAGS, [])) >= 2:
+            for x, y in itertools.combinations(tweet[CONST_JSON_HASHTAGS], 2):
+                increment_edge(x, y, graph)
+            deque.append(tweet)
 
-        deque.append(tweet)
+        # However, even if does not have >=2, still use to remove old tweets.
         time_limit = date_parse(tweet[CONST_JSON_CREATED_AT]) - relativedelta(seconds=_TIME_LIMIT_IN_SECONDS)
         remove_old_tweets(time_limit, graph, deque)
 
-        print graph.number_of_edges() * 2 / float(graph.number_of_nodes())
+        if graph.number_of_nodes():
+            print "%.2f" % (graph.number_of_edges() * 2 / float(graph.number_of_nodes()))
+        else:
+            print 0.00
 
 
 def remove_old_tweets(time_limit, graph, deque):
-    while date_parse(deque[0][CONST_JSON_CREATED_AT]) < time_limit:
+    while deque and date_parse(deque[0][CONST_JSON_CREATED_AT]) < time_limit:
         # removes from head until we get one less than 1 minute prior.
         stale_tweet = deque.popleft()
         for x, y in itertools.combinations(stale_tweet[CONST_JSON_HASHTAGS], 2):
@@ -61,6 +68,7 @@ def decrement_edge(x, y, graph):
         try:
             graph.remove_edge(x, y)
         except networkx.exception.NetworkXError:
+            # todo: handler for logger.
             _logger.error("Tried to remove a non existent edge (%s, %s)." % (x, y))
 
         # if these nodes don't have edges anymore, remove them

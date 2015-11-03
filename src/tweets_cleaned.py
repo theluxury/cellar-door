@@ -19,10 +19,10 @@ def main():
         if decoded_string != tweet[json_helper.CONST_JSON_TEXT]:
             count += 1
 
-        print "%s (timestamp: %s)" % (decoded_string, tweet[json_helper.CONST_JSON_CREATED_AT])
+        #print "%s (timestamp: %s)" % (decoded_string, tweet[json_helper.CONST_JSON_CREATED_AT])
 
     # print()  # empty line for styling.
-    print "%d tweets contained unciode" % count
+    #print "%d tweets contained unciode" % count
 
 if __name__ == '__main__':
     main()
