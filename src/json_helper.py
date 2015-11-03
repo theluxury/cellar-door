@@ -1,28 +1,29 @@
 import json
-from enum import Enum
-
-CONST_JSON_TEXT = "text"
-CONST_JSON_CREATED_AT = "created_at"
-CONST_JSON_ENTITIES = "entities"
-CONST_JSON_HASHTAGS = "hashtags"
-CONST_JSON_HASHTAG_TEXT = "text"
-_Assignment = Enum("Assignment", "filter_unicode avg_hashtag_graph")
+import config
 
 
+# Don't instantiate this one.
+class _JsonRequestBase(object):
 
-# todo: make these two subclass of something else
-class JsonRequest:
-    def __init__(self, key, json_chain, to_lower=False, make_ascii=False):
+    def __init__(self, key, json_chain, require_lower_case=False, require_ascii_format=False):
         self.key = key
         self.json_chain = json_chain
-        self.to_lower = to_lower
-        self.make_ascii = make_ascii
+        self.require_lower_case = require_lower_case
+        self.require_ascii_format = require_ascii_format
 
 
-class JsonRequestList(JsonRequest):
-    def __init__(self, key, json_chain, to_lower=False, make_ascii=False, make_unique=False, min_length=1):
-        JsonRequest.__init__(self, key, json_chain, to_lower, make_ascii)
-        self.make_unique = make_unique
+# Use this one for json keys where you expect a single value
+class JsonRequestSingle(_JsonRequestBase):
+    def __init__(self, key, json_chain, require_lower_case=False, require_ascii_format=False):
+        _JsonRequestBase.__init__(self, key, json_chain, require_lower_case, require_ascii_format)
+
+
+# Use this onefor json keys where you expect a list
+class JsonRequestList(_JsonRequestBase):
+    def __init__(self, key, json_chain, require_lower_case=False, require_ascii_format=False,
+                 require_unique_elements=False, min_length=1):
+        _JsonRequestBase.__init__(self, key, json_chain, require_lower_case, require_ascii_format)
+        self.require_unique_elements = require_unique_elements
         self.min_length = min_length
 
 
@@ -36,7 +37,7 @@ def parse_tweets(filename, requests_list):
             for request in requests_list:
                 try:
                     value = nested_json_fields_value(tweet_json, request.json_chain)
-                except ValueError: # this usually happens if the json is missing a vital field.
+                except ValueError:  # this usually happens if the json is missing a vital field.
                     ignore_tweet = True
                     break
 
@@ -52,20 +53,20 @@ def parse_tweets(filename, requests_list):
 
 
 def format_value(value, request):
-    if request.__class__ == JsonRequest:
+    if isinstance(request, JsonRequestSingle):
         return format_primitive_value(value, request)
-    elif request.__class__ == JsonRequestList:
+    elif isinstance(request, JsonRequestList):
         return format_list_value(value, request)
     else:
-        raise ValueError("Got an odd JSON request.")
+        raise ValueError("Got an odd JSON format request object.")
 
 
-def format_list_value(list, request):
+def format_list_value(values_list, request):
     placeholder_list = []
-    for value in list:
+    for value in values_list:
         placeholder_list.append(format_primitive_value(value, request))
 
-    if request.make_unique:
+    if request.require_unique_elements:
         placeholder_list = make_unique(placeholder_list)
 
     return placeholder_list
@@ -73,21 +74,15 @@ def format_list_value(list, request):
 
 def format_primitive_value(value, request):
     if isinstance(value, basestring):
-        if request.to_lower:
+        if request.require_lower_case:
             value = value.lower()
-        if request.make_ascii:
+        if request.require_ascii_format:
             value = make_ascii(value)
 
     return value
 
 
-def value_is_acceptable(value, request):
-    if request.__class__ == JsonRequestList:
-        if len(value) < request.min_length:
-            return False
-    return True
-
-# TODO: test this funciton.
+# TODO: test all functions
 def make_unique(input_list):
     placeholder_set = set()
     try:
@@ -109,7 +104,8 @@ def nested_json_fields_value(tweet_json, nested_json_fields):
         raise LookupError("Got a malformed json key list: list did not conclude with value.")
 
     if nested_json_fields[0] not in tweet_json:  # empty json key. might just be malformed tweet, skip.
-        raise ValueError("Could not find field in JSON. Skipping tweet")
+        config.logger.warning("Could not find value %s in %s, skipping." % (nested_json_fields[0], tweet_json))
+        raise ValueError()
 
     value = tweet_json.get(nested_json_fields[0])
     if not value:  # If empty no need to process more.
@@ -127,4 +123,3 @@ def nested_json_fields_value(tweet_json, nested_json_fields):
             raise LookupError("Could not finish json key lookup chain: found value before list concluded.")
         else:
             return value
-
