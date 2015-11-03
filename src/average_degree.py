@@ -27,9 +27,13 @@ def main():
 
     graph = networkx.Graph()
     for tweet in sorted_tweets:
+        # TODO: is this what we want this to do?
+        # # Remove all empty hashtags.
+        if "" in tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]:
+            tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY].remove("")
         # since the hashtags have been encoded to ascii and made unique, this should only increment the edge
         # if and only if tweet had set of >=2 hashtags.
-        if len(tweet.get(config.TWEET_DICTIONARY_HASHTAGS_KEY, [])) >= 2:
+        if len(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]) >= 2:
             for x, y in itertools.combinations(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY], 2):
                 increment_edge(x, y, graph)
             deque.append(tweet)

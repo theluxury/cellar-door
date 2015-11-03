@@ -100,26 +100,20 @@ def make_ascii(text):
 
 
 def nested_json_fields_value(tweet_json, nested_json_fields):
-    if not nested_json_fields:
-        raise LookupError("Got a malformed json key list: list did not conclude with value.")
-
-    if nested_json_fields[0] not in tweet_json:  # empty json key. might just be malformed tweet, skip.
+    if not nested_json_fields or nested_json_fields[0] not in tweet_json:
+        # bad json chain given, skip.
         config.logger.warning("Could not find value %s in %s, skipping." % (nested_json_fields[0], tweet_json))
         raise ValueError()
 
     value = tweet_json.get(nested_json_fields[0])
-    if not value:  # If empty no need to process more.
+    if len(nested_json_fields) == 1:
         return value
-    elif type(value) == dict:  # nested json object, recurse.
-        return nested_json_fields_value(value, nested_json_fields[1:])
-    elif type(value) == list and type(value[0]) == dict:  # array of nested json objects, recurse.
+    elif isinstance(value, list):
+        # array of nested json objects or lists, recurse while adding to list.
+        # TODO: This might not work if list of a list? Think that's fine, twitter JSON not that dumb.
         response_list = []
         for item in value:
             response_list.append(nested_json_fields_value(item, nested_json_fields[1:]))
         return response_list
-    else:  # candidates for return
-        if nested_json_fields[1:]:
-            # still have unused fields in nested_json_fields, so should raise error.
-            raise LookupError("Could not finish json key lookup chain: found value before list concluded.")
-        else:
-            return value
+    else:
+        return nested_json_fields_value(value, nested_json_fields[1:])
