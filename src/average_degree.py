@@ -23,7 +23,6 @@ def main():
     sorted_tweets = sorted(tweets, key=lambda t: t[config.TWEET_DICTIONARY_DATE_TIME_KEY])
 
     # deque to check for how many edges to remove when adding new tweet.
-    # queue is enough but python only has this library included
     deque = collections.deque()
 
     graph = networkx.Graph()

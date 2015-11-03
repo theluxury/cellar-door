@@ -2,7 +2,7 @@ import json
 import config
 
 
-# Don't instantiate this one.
+# Don't instantiate this one directly.
 class _JsonRequestBase(object):
 
     def __init__(self, key, json_chain, require_lower_case=False, require_ascii_format=False):
