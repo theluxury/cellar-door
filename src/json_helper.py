@@ -16,18 +16,12 @@ class JsonRequest:
         self.to_lower = to_lower
         self.make_ascii = make_ascii
 
+
 class JsonRequestList(JsonRequest):
     def __init__(self, key, json_chain, to_lower=False, make_ascii=False, make_unique=False, min_length=1):
         JsonRequest.__init__(self, key, json_chain, to_lower, make_ascii)
         self.make_unique = make_unique
         self.min_length = min_length
-
-
-def parse_tweets_hashtag_and_created_at_time(filename):
-    request1 = JsonRequest(CONST_JSON_CREATED_AT, [CONST_JSON_CREATED_AT])
-    request2 = JsonRequestList(CONST_JSON_HASHTAGS, [CONST_JSON_ENTITIES, CONST_JSON_HASHTAGS, CONST_JSON_TEXT],
-                               to_lower=True, make_unique=True, min_length=2)
-    return parse_tweets(filename, [request1, request2])
 
 
 def parse_tweets(filename, requests_list):
@@ -36,15 +30,25 @@ def parse_tweets(filename, requests_list):
         for line in tweet_file:
             tweet_json = json.loads(line)
             tweet = {}
-            try:
-                for request in requests_list:
+            ignore_tweet = False
+            for request in requests_list:
+                try:
                     value = nested_json_fields_value(tweet_json, request.json_chain)
-                    value = format_value(value, request)
-                    tweet[request.key] = value
-                tweets.append(tweet)
-            except ValueError:  # usually happens if some tweet doesn't have the right keys or lists to add
-                                # don't have the required length. Can skip.
+                except ValueError: # this usually happens if the json is missing a vital field.
+                    ignore_tweet = True
+                    break
+
+                value = format_value(value, request)
+                if not value_is_acceptable(value, request):
+                    ignore_tweet = True
+                    break
+
+                tweet[request.key] = value
+
+            if ignore_tweet:
                 continue
+            else:
+                tweets.append(tweet)
 
         return tweets
 
@@ -67,8 +71,6 @@ def format_list_value(list, request):
     if request.make_unique:
         placeholder_list = make_unique(placeholder_list)
 
-    if len(placeholder_list) < request.min_length:
-        raise ValueError("List doesn't contain minimum amount of elements needed to be added.")
     return placeholder_list
 
 
@@ -82,6 +84,12 @@ def format_primitive_value(value, request):
     return value
 
 
+def value_is_acceptable(value, request):
+    if request.__class__ == JsonRequestList:
+        if len(value) < request.min_length:
+            return False
+    return True
+
 # TODO: test this funciton.
 def make_unique(input_list):
     placeholder_set = set()
@@ -90,7 +98,7 @@ def make_unique(input_list):
             placeholder_set.add(item)
     except TypeError:
         raise TypeError("Could not make elements in list unique. "
-                        "This is usually because the elements are not hashtable.")
+                        "This is usually because the elements are not hashable.")
 
     return list(placeholder_set)
 

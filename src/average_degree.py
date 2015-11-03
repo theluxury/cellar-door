@@ -61,7 +61,7 @@ def decrement_edge(x, y, graph):
         try:
             graph.remove_edge(x, y)
         except networkx.exception.NetworkXError:
-            _logger.error("Tried to remove non existent edge (%s, %s)." % (x, y))
+            _logger.error("Tried to remove a non existent edge (%s, %s)." % (x, y))
 
         # if these nodes don't have edges anymore, remove them
         for node in [x, y]:
@@ -75,7 +75,7 @@ def check_node_for_removal(node, graph):
         if not graph.neighbors(node):
             graph.remove_node(node)
     except networkx.exception.NetworkXError:
-        _logger.error("Tried to remove non existent node %s." % node)
+        _logger.error("Tried to remove a non existent node %s." % node)
 
 
 if __name__ == '__main__':
