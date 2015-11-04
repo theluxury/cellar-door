@@ -18,7 +18,7 @@ def main():
     request2 = json_helper\
         .JsonRequestList(config.TWEET_DICTIONARY_HASHTAGS_KEY, config.TWEET_JSON_HASHTAGS_LOCATION,
                          require_lower_case=True, require_ascii_format=True,
-                         require_unique_elements=True, min_length=2)
+                         require_unique_elements=True)
     tweets = json_helper.parse_tweets(sys.argv[1], [request1, request2])
     sorted_tweets = sorted(tweets, key=lambda t: t[config.TWEET_DICTIONARY_DATE_TIME_KEY])
 
@@ -31,17 +31,8 @@ def main():
         # # Remove all empty hashtags.
         if "" in tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]:
             tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY].remove("")
-        # since the hashtags have been encoded to ascii and made unique, this should only increment the edge
-        # if and only if tweet had set of >=2 hashtags.
-        if len(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]) >= 2:
-            for x, y in itertools.combinations(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY], 2):
-                increment_edge(x, y, graph)
-            deque.append(tweet)
 
-        # However, even if does not have >=2, still use to remove old tweets.
-        time_limit = date_parse(tweet[config.TWEET_DICTIONARY_DATE_TIME_KEY]) \
-            - relativedelta(seconds=_TIME_LIMIT_IN_SECONDS)
-        remove_old_tweets(time_limit, graph, deque)
+        update_graph_and_deque(tweet, graph, deque, _TIME_LIMIT_IN_SECONDS)
 
         if graph.number_of_nodes():
             print "%.2f" % (graph.number_of_edges() * 2 / float(graph.number_of_nodes()))
@@ -49,7 +40,24 @@ def main():
             print 0.00
 
 
-def remove_old_tweets(time_limit, graph, deque):
+def update_graph_and_deque(tweet, graph, deque, seconds_to_go_back):
+    add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque)
+    # Even if tweet does not have >=2 unique hashtags, still use to remove old tweets.
+    time_limit = date_parse(tweet[config.TWEET_DICTIONARY_DATE_TIME_KEY]) \
+        - relativedelta(seconds=seconds_to_go_back)
+    remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, deque)
+
+
+def add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque):
+    # since the hashtags have been encoded to ascii and made unique, this should only increment the edge
+    # if and only if tweet had set of >=2 hashtags.
+    if len(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]) >= 2:
+        for x, y in itertools.combinations(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY], 2):
+            increment_edge(x, y, graph)
+        deque.append(tweet)
+
+
+def remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, deque):
     while deque and date_parse(deque[0][config.TWEET_DICTIONARY_DATE_TIME_KEY]) < time_limit:
         # removes from head until we get one less than 1 minute prior.
         stale_tweet = deque.popleft()

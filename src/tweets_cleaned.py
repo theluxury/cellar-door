@@ -20,8 +20,9 @@ def main():
     tweets = json_helper.parse_tweets(sys.argv[1], [request1, request2])
     count = 0
     for tweet in tweets:
-        escapes_removed_string = tweet[config.TWEET_DICTIONARY_TEXT_KEY].replace("\r\n", " ") \
-        .replace("\r", " ").replace("\n", " ").replace("\t", " ").replace("\b", " ").replace("\v", " ")
+        print tweet[config.TWEET_DICTIONARY_TEXT_KEY]
+        # TODO: Make note of fact json.loads get rid of a lot of escapes in readme
+        escapes_removed_string = remove_whitespace_escapes(tweet[config.TWEET_DICTIONARY_TEXT_KEY])
         # normally could actually make ascii in request, but doing it here for count.
         decoded_string = json_helper.make_ascii(escapes_removed_string)
         if decoded_string != escapes_removed_string:
@@ -31,6 +32,12 @@ def main():
 
     print()  # empty line for styling.
     print "%d tweets contained unciode" % count
+
+
+def remove_whitespace_escapes(original_string):
+    return original_string.replace("\r\n", " ").replace("\r", " ").replace("\n", " ")\
+        .replace("\t", " ").replace("\b", " ").replace("\v", " ")
+
 
 if __name__ == '__main__':
     main()

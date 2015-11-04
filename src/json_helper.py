@@ -21,10 +21,9 @@ class JsonRequestSingle(_JsonRequestBase):
 # Use this onefor json keys where you expect a list
 class JsonRequestList(_JsonRequestBase):
     def __init__(self, key, json_chain, require_lower_case=False, require_ascii_format=False,
-                 require_unique_elements=False, min_length=1):
+                 require_unique_elements=False):
         _JsonRequestBase.__init__(self, key, json_chain, require_lower_case, require_ascii_format)
         self.require_unique_elements = require_unique_elements
-        self.min_length = min_length
 
 
 def parse_tweets(filename, requests_list):
@@ -40,7 +39,6 @@ def parse_tweets(filename, requests_list):
                 except ValueError:  # this usually happens if the json is missing a vital field.
                     ignore_tweet = True
                     break
-
                 value = format_value(value, request)
                 tweet[request.key] = value
 
