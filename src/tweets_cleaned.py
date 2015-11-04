@@ -14,10 +14,18 @@ Go to http://stackoverflow.com/questions/3411771/multiple-character-replace-with
 
 
 def main():
+    tweets = get_tweets_text_and_time(sys.argv[1])
+    format_and_print_tweets(tweets)
+
+
+def get_tweets_text_and_time(filename):
     request1 = json_helper.JsonRequestSingle(config.TWEET_DICTIONARY_DATE_TIME_KEY,
                                              config.TWEET_JSON_DATE_TIME_LOCATION)
     request2 = json_helper.JsonRequestSingle(config.TWEET_DICTIONARY_TEXT_KEY, config.TWEET_JSON_TEXT_LOCATION)
-    tweets = json_helper.parse_tweets(sys.argv[1], [request1, request2])
+    return json_helper.parse_tweets(filename, [request1, request2])
+
+
+def format_and_print_tweets(tweets):
     count = 0
     for tweet in tweets:
         print tweet[config.TWEET_DICTIONARY_TEXT_KEY]

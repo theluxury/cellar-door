@@ -20,27 +20,30 @@ def main():
                          require_lower_case=True, require_ascii_format=True,
                          require_unique_elements=True)
     tweets = json_helper.parse_tweets(sys.argv[1], [request1, request2])
+    #TODO: Can remove this sort for performance since they said they'd sort it.
     sorted_tweets = sorted(tweets, key=lambda t: t[config.TWEET_DICTIONARY_DATE_TIME_KEY])
 
     # deque to check for how many edges to remove when adding new tweet.
     deque = collections.deque()
-
     graph = networkx.Graph()
     for tweet in sorted_tweets:
-        # TODO: is this what we want this to do?
-        # # Remove all empty hashtags.
-        if "" in tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]:
-            tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY].remove("")
-
         update_graph_and_deque(tweet, graph, deque, _TIME_LIMIT_IN_SECONDS)
+        print avg_edges_per_node(graph)
 
-        if graph.number_of_nodes():
-            print "%.2f" % (graph.number_of_edges() * 2 / float(graph.number_of_nodes()))
-        else:
-            print 0.00
+
+def avg_edges_per_node(graph):
+    if graph.number_of_nodes():
+        return "%.2f" % (graph.number_of_edges() * 2 / float(graph.number_of_nodes()))
+    else:
+        return 0.00
 
 
 def update_graph_and_deque(tweet, graph, deque, seconds_to_go_back):
+    # TODO: is this what we want this to do?
+        # # Remove empty hashtags.
+    if "" in tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]:
+        tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY].remove("")
+
     add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque)
     # Even if tweet does not have >=2 unique hashtags, still use to remove old tweets.
     time_limit = date_parse(tweet[config.TWEET_DICTIONARY_DATE_TIME_KEY]) \

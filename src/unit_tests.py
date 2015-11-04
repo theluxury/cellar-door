@@ -4,6 +4,7 @@ import config
 import tweets_cleaned
 import networkx
 import average_degree
+import collections
 
 class TestParserMethods(unittest.TestCase):
     def setUp(self):
@@ -157,10 +158,62 @@ class GraphMethods(unittest.TestCase):
 class GraphIntegration(unittest.TestCase):
     def setUp(self):
         # so make some tweets, and then test with update.
-        tweet1 = self.make_tweet("Thu Oct 29 17:51:50 +0000 2015", ["a"])
-        tweet2 = self.make_tweet("Thu Oct 29 17:51:50 +0000 2015", ["b", ""])
+        self.tweet1 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", [])
+        self.tweet2 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", ["a"])
+        self.tweet3 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", ["b", ""])
 
-        # then assert edges and nodes and deque length. 
+        self.tweet4 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", ["a", "b"])
+        # a <-> b
+        self.tweet5 = self.make_tweet("Thu Oct 29 00:00:10 +0000 2015", ["b", "c"])
+        # a <-> b <-> c
+        self.tweet6 = self.make_tweet("Thu Oct 29 00:00:20 +0000 2015", ["a", "b"])
+        # a <2->b <-> c
+
+        self.tweet7 = self.make_tweet("Thu Oct 29 00:01:01 +0000 2015", [])
+        # a <-> b <-> c
+        self.tweet8 = self.make_tweet("Thu Oct 29 00:01:11 +0000 2015", ["b", "c"])
+        # a <-> b <-> c
+        self.tweet9 = self.make_tweet("Thu Oct 29 00:01:21 +0000 2015", ["b"])
+        # b <-> c
+        self.tweet10 = self.make_tweet("Thu Oct 29 00:01:21 +0000 2015", ["d", "e"])
+        # b <-> c, d <-> e
+
+        self.tweet11 = self.make_tweet("Thu Oct 29 00:03:00 +0000 2015", ["b"])
+        # none.
+
+        self.graph = networkx.Graph()
+        self.deque = collections.deque()
+        self._TIME_LIMIT_IN_SECONDS = 60
+
+
+    def test_graph_updates(self):
+        # assert first 3 tweets don't do anything beacuse. First because empty, second because only 1 element,
+        # third because ignore empty hashtag.
+        average_degree.update_graph_and_deque(self.tweet1, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(0, 0, self.graph, 0, self.deque)
+        average_degree.update_graph_and_deque(self.tweet2, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(0, 0, self.graph, 0, self.deque)
+        average_degree.update_graph_and_deque(self.tweet3, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(0, 0, self.graph, 0, self.deque)
+
+        average_degree.update_graph_and_deque(self.tweet4, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(2, 1, self.graph, 1, self.deque)
+        average_degree.update_graph_and_deque(self.tweet5, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(3, 2, self.graph, 2, self.deque)
+        average_degree.update_graph_and_deque(self.tweet6, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(3, 2, self.graph, 3, self.deque)
+
+        average_degree.update_graph_and_deque(self.tweet7, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(3, 2, self.graph, 2, self.deque)
+        average_degree.update_graph_and_deque(self.tweet8, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(3, 2, self.graph, 2, self.deque)
+        average_degree.update_graph_and_deque(self.tweet9, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(2, 1, self.graph, 1, self.deque)
+
+        average_degree.update_graph_and_deque(self.tweet10, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(4, 2, self.graph, 2, self.deque)
+        average_degree.update_graph_and_deque(self.tweet11, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(0, 0, self.graph, 0, self.deque)
 
 
 
@@ -170,9 +223,10 @@ class GraphIntegration(unittest.TestCase):
         tweet_dict['hashtags'] = hashtags
         return tweet_dict
 
-
-
-
+    def graph_and_deque_assert(self, num_nodes, num_edges, graph, length_deque, deque):
+        self.assertEqual(num_nodes, graph.number_of_nodes())
+        self.assertEqual(num_edges, graph.number_of_edges())
+        self.assertEqual(length_deque, len(deque))
 
 
 if __name__ == '__main__':
