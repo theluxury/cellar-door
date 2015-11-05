@@ -42,7 +42,7 @@ def format_and_print_tweets(tweets):
 
 
 def remove_whitespace_escapes(original_string):
-    return original_string.replace("\r\n", " ").replace("\r", " ").replace("\n", " ")\
+    return original_string.replace("\r\n", " ").replace("\r", " ").replace("\n", " ") \
         .replace("\t", " ").replace("\b", " ").replace("\v", " ")
 
 

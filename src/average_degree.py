@@ -14,7 +14,7 @@ _TIME_LIMIT_IN_SECONDS = 60
 
 def main():
     tweets = get_tweets_hashtags_and_time(sys.argv[1])
-    #TODO: Can remove this sort for performance since they said they'd sort it.
+    # Can remove this sort for performance since they said they'd sort it.
     # sorted_tweets = sorted(tweets, key=lambda t: t[config.TWEET_DICTIONARY_DATE_TIME_KEY])
     format_and_print_averages(tweets)
 
@@ -84,15 +84,7 @@ def decrement_edge(x, y, graph):
     # No error here if no edge exists because of default value.
     weight = graph.get_edge_data(x, y, {'weight': 1})["weight"]
     if weight == 1:
-        # error here if no such edge or node. Reason for three try loops is want to remove nodes for accuracy
-        # even if it doesn't have edge.
-        # TODO: Don't catch this error, and fix it in the unit test.
-        try:
-            graph.remove_edge(x, y)
-        except networkx.exception.NetworkXError:
-            config.logger.error("Tried to remove a non existent edge (%s, %s)." % (x, y))
-
-        # if these nodes don't have edges anymore, remove them
+        graph.remove_edge(x, y)
         for node in [x, y]:
             check_node_for_removal(node, graph)
     else:
@@ -100,11 +92,8 @@ def decrement_edge(x, y, graph):
 
 
 def check_node_for_removal(node, graph):
-    try:
-        if not graph.neighbors(node):
-            graph.remove_node(node)
-    except networkx.exception.NetworkXError:
-        config.logger.error("Tried to remove a non existent node %s." % node)
+    if not graph.neighbors(node):
+        graph.remove_node(node)
 
 
 if __name__ == '__main__':
