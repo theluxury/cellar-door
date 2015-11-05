@@ -11,7 +11,8 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
 
 ## Assumptions for Feature One
 
-1. Tweets with empty text after unicode has been removed will still be printed in <text> (date) format with empty test.
+1. Tweets with empty text after unicode has been removed will still be printed in \<text> (date) format with empty test.
+
 2. The full list of escapes that are replaced with one whitespace are
   * \r\n
   * \n
