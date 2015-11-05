@@ -33,4 +33,6 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
 
 4. All tweets (even those without any hashtags) have the ability to evict old tweets. 
 
+5. The tweet inputs will be sorted chronologically, as stated in the FAQ. If for whatever reason they are not, my code will work if line 18 in average_degree.py is uncommented and tweets in line 19 is replace with sorted_tweets. 
+
 Please send any comments or questions to Mark Wang at zhengkaw@gmail.com

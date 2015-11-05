@@ -47,7 +47,7 @@ def avg_edges_per_node(graph):
 
 def update_graph_and_deque(tweet, graph, deque, seconds_to_go_back):
     # TODO: is this what we want this to do?
-        # # Remove empty hashtags.
+        # Remove empty hashtags.
     if "" in tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]:
         tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY].remove("")
 
