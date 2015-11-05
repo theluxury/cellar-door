@@ -33,6 +33,8 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
 
 4. All tweets (even those without any hashtags) have the ability to evict old tweets. 
 
+5. If the graph contains no edges and no nodes, then the output with be 0.0.
+
 5. The tweet inputs will be sorted chronologically, as stated in the FAQ. If for whatever reason they are not, my code will work if line 18 in average_degree.py is uncommented and tweets in line 19 is replace with sorted_tweets. 
 
 ## Tests

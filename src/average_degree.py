@@ -77,13 +77,15 @@ def remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, dequ
 
 def decrement_edge(x, y, graph):
     # TODO: Think about this a little more.
+    # TODO: reorder methods in the files.
+    # TODO: Maybe document tests a bit.
     # This raises an error if there is no such edge.
     # This is desired behavior since that means something went wrong.
     try:
         weight = graph.get_edge_data(x, y)["weight"]
     except TypeError:
         error_msg = "Tried to decrement edge (%s, %s) that doesn't exist. " \
-                                               "Something went wrong, check the input data." % (x, y)
+                                               "Something went wrong: check the input data." % (x, y)
         config.logger.error(error_msg)
         raise TypeError(error_msg)
     if weight == 1:
@@ -103,7 +105,7 @@ def avg_edges_per_node(graph):
     if graph.number_of_nodes():
         return "%.2f" % (graph.number_of_edges() * 2 / float(graph.number_of_nodes()))
     else:
-        return 0.00
+        return "%.2f" % 0.00
 
 if __name__ == '__main__':
     main()

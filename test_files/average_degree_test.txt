@@ -1,0 +1,11 @@
+{"created_at":"Fri Oct 30 00:00:00 +0000 2015","entities":{"hashtags":[{"text":"Trump"}]}}
+{"created_at":"Fri Oct 30 00:00:00 +0000 2015","entities":{"hashtags":[]}}
+{"created_at":"Fri Oct 30 00:00:00 +0000 2015","entities":{"hashtags":[{"text":"kusugawa"},{"text":"\u4e45\u5bff\u5ddd"}]}}
+{"created_at":"Fri Oct 30 00:00:00 +0000 2015","entities":{"hashtags":[{"text":"Trump"},{"text":"Election"},{"text":"News"}]}}
+{"created_at":"Fri Oct 30 00:00:10 +0000 2015","entities":{"hashtags":[{"text":"hiring"},{"text":"BusinessMgmt"},{"text":"NettempsJobs"},{"text":"MenloPark"},{"text":"Job"},{"text":"Jobs"},{"text":"CareerArc"}]}}
+{"created_at":"Fri Oct 30 00:00:20 +0000 2015","entities":{"hashtags":[{"text":"tRuMp"},{"text":"Rhonda"}]}}
+{"created_at":"Fri Oct 30 00:00:30 +0000 2015","entities":{"hashtags":[{"text":"\u00e7trU\u00e7Mp"},{"text":"LaLiga"}]}}
+{"created_at":"Fri Oct 30 00:00:40 +0000 2015","entities":{"hashtags":[{"text":"\u00e7trU\u00e7Mp"},{"text":"L\u00e7alIga"}]}}
+{"created_at":"Fri Oct 30 00:01:01 +0000 2015","entities":{"hashtags":[{"text":"a"},{"text":"b"}]}}
+{"created_at":"Fri Oct 30 00:01:31 +0000 2015","entities":{"hashtags":[]}}
+{"created_at":"Fri Oct 30 00:03:00 +0000 2015","entities":{"hashtags":[]}}

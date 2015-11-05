@@ -4,7 +4,6 @@ import tweets_cleaned
 import average_degree
 import os.path
 
-
 """
 Raw JSON for tweets_cleaned_test:
 tweet1: {"created_at": "Thu Oct 29 18:10:49 +0000 2015", "text":
@@ -32,28 +31,32 @@ tweet6: {"created_at": "Thu Oct 29 18:10:49 +0000 2015", "text":
 class TweetsCleanedTest(unittest.TestCase):
     def setUp(self):
         test_input_location = os.path.join(os.path.join(os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))), "data-gen"), "tweets_cleaned_test.txt")
+            os.path.dirname(os.path.abspath(__file__))), "test_files"), "tweets_cleaned_test.txt")
         self.tweets = tweets_cleaned.get_tweets_text_and_time(test_input_location)
 
-        self.line1 = "I'm at Terminal de Integrao do Varadouro in Joo Pessoa, " \
-                     "PB https://t.co/HOl34REL1a (timestamp: Thu Oct 29 18:10:49 +0000 2015)\n"
-        self.line2 = "6A has decided to postpone final vote until appeals are heard by executive board. " \
-                     "What seems set: 7 regions. (timestamp: Thu Oct 29 17:51:51 +0000 2015)\n"
-        self.line3 = "@i_am_sknapp Thanks for following us, Seth. (timestamp: Thu Oct 29 18:10:49 +0000 2015)\n"
-        self.line4 = "#Football Card Specialist - SDPW  Tips 170 Won 88 Profit +219.10 ROI 12.89%  " \
-                     "1 Tip from #LaLiga this evening &gt;&gt;&gt; https://t.co/tdkGo2rCKa " \
-                     "(timestamp: Fri Oct 30 15:29:45 +0000 2015)\n"
-        self.line5 = "@lezlielowe That one for @skimber is *literally* the only name I can take credit (blame) for. " \
-                     "Thanks for noticingyou really are magical. (timestamp: Thu Oct 29 18:10:49 +0000 2015)\n"
-        self.line6 = " (timestamp: Thu Oct 29 18:10:49 +0000 2015)\n"
-        self.line7 = "\n3 tweets contained unciode\n"
+        self.expected_text_array = [
+            "I'm at Terminal de Integrao do Varadouro in Joo Pessoa, "  # tweet 1
+            "PB https://t.co/HOl34REL1a (timestamp: Thu Oct 29 18:10:49 +0000 2015)",
+            "6A has decided to postpone final vote until appeals are heard by executive board. "  # tweet 2
+            "What seems set: 7 regions. (timestamp: Thu Oct 29 17:51:51 +0000 2015)",
+            "@i_am_sknapp Thanks for following us, Seth. (timestamp: Thu Oct 29 18:10:49 +0000 2015)",  # tweet 3
+            "#Football Card Specialist - SDPW  Tips 170 Won 88 Profit +219.10 ROI 12.89%  "  # tweet 4
+            "1 Tip from #LaLiga this evening &gt;&gt;&gt; https://t.co/tdkGo2rCKa "
+            "(timestamp: Fri Oct 30 15:29:45 +0000 2015)",
+            "@lezlielowe That one for @skimber is *literally* the only name I can take credit (blame) for. "  # tweet 5
+            "Thanks for noticingyou really are magical. (timestamp: Thu Oct 29 18:10:49 +0000 2015)",
+            " (timestamp: Thu Oct 29 18:10:49 +0000 2015)",  # tweet 6
+            "\n3 tweets contained unciode"  # final with empty line for styling
+        ]
 
-        self.expected = self.line1 + self.line2 + self.line3 + self.line4 + self.line5 + self.line6 + self.line7
+        self.expected_output = ""
+        for expected_text in self.expected_text_array:
+            self.expected_output += expected_text + "\n"
 
     def test_e2e_tweets_cleaned(self):
         tweets_cleaned.format_and_print_tweets(self.tweets)
         output = sys.stdout.getvalue()
-        self.assertEqual(self.expected, output)
+        self.assertEqual(self.expected_output, output)
 
 
 """
@@ -94,28 +97,18 @@ avg should be 0.00
 class AverageDegreeTest(unittest.TestCase):
     def setUp(self):
         test_input_location = os.path.join(os.path.join(os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))), "data-gen"), "average_degree_test.txt")
+            os.path.dirname(os.path.abspath(__file__))), "test_files"), "average_degree_test.txt")
         self.tweets = average_degree.get_tweets_hashtags_and_time(test_input_location)
 
-        self.line1 = "0.0\n"
-        self.line2 = "0.0\n"
-        self.line3 = "0.0\n"
-        self.line4 = "2.00\n"
-        self.line5 = "4.80\n"
-        self.line6 = "4.55\n"
-        self.line7 = "4.33\n"
-        self.line8 = "4.33\n"
-        self.line9 = "4.00\n"
-        self.line10 = "1.00\n"
-        self.line11 = "0.0\n"
-
-        self.expected = self.line1 + self.line2 + self.line3 + self.line4 + self.line5 + \
-            self.line6 + self.line7 + self.line8 + self.line9 + self.line10 + self.line11
+        self.expected_avg_array = [0.00, 0.00, 0.00, 2.00, 4.80, 4.55, 4.33, 4.33, 4.00, 1.00, 0.00]
+        self.expected_output = ""
+        for expected_value in self.expected_avg_array:
+            self.expected_output += "%.2f" % expected_value + "\n"
 
     def test_e2e_averge_degree(self):
         average_degree.format_and_print_averages(self.tweets)
         output = sys.stdout.getvalue()
-        self.assertEqual(self.expected, output)
+        self.assertEqual(self.expected_output, output)
 
 
 if __name__ == '__main__':
