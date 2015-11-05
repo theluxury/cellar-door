@@ -28,7 +28,6 @@ def get_tweets_text_and_time(filename):
 def format_and_print_tweets(tweets):
     count = 0
     for tweet in tweets:
-        print tweet[config.TWEET_DICTIONARY_TEXT_KEY]
         # TODO: Make note of fact json.loads get rid of a lot of escapes in readme
         escapes_removed_string = remove_whitespace_escapes(tweet[config.TWEET_DICTIONARY_TEXT_KEY])
         # normally could actually make ascii in request, but doing it here for count.
@@ -38,7 +37,7 @@ def format_and_print_tweets(tweets):
 
         print "%s (timestamp: %s)" % (decoded_string, tweet[config.TWEET_DICTIONARY_DATE_TIME_KEY])
 
-    print()  # empty line for styling.
+    print  # empty line for styling.
     print "%d tweets contained unciode" % count
 
 
