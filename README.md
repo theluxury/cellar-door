@@ -13,14 +13,13 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
 
 1. Tweets with empty text after unicode has been removed will still be printed in \<text> (date) format with empty text.
 
-2. The full list of escapes that are replaced with one whitespace are
+2. The full list of escapes that are replaced with one whitespace are as follows. Note that performance can be slightly improved by trimming this list, as none of the example tweets actually had \t \v or \b in them. However, they were added to the replace list for completness. 
   * \r\n
   * \n
   * \r
   * \t
   * \v
   * \b
-> Note that performance can be slightly improved by trimming this list, as none of the example tweets actually had \t \v or \b on them. However, they were added to the replace list for completness. 
 
 3. An empty line has been added after the tweets and before the unicode count for styling as in the example in the output.
 
