@@ -64,7 +64,7 @@ Currently covers the following:
 
 1. JSON parsing and error handling.
 
-2. Formatting of the values once parsed. This includes
+2. Formatting the parsed values. This includes
   * Making hashtags lower case
   * Removing unicode
   * Replacing escapes.
@@ -85,7 +85,7 @@ All the tweets were +0000 timezone offset, so behavior with tweets of different 
 
 ## Donald Trump
 
-Donald Trump's last name is used frequently for sample hashtags, as #Trump appeared in the first tweet from tweets.txt to contain a hashtag, and I thought it would be both topical and humorous to keep using it. Note that this does not mean I support him, his party, nor the wall.   
+Donald Trump's last name is used frequently for sample hashtags. This is because #Trump appeared in the first tweet from tweets.txt to contain a hashtag and I thought it would be both topical and humorous to keep using it. Note that this does not mean I support him, his party, nor the wall.   
 
 
 Please send any comments or questions to Mark Wang at zhengkaw@gmail.com
