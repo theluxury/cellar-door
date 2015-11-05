@@ -21,13 +21,13 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
   * \v
   * \b
 
-  Note that performance can be slightly improved by trimming this list, as none of the example tweets actually had \t \v or \b in them. However, they were added to the list for completness. 
+  Note that performance can be slightly improved by trimming this list, as none of the example tweets actually had \t \v or \b in them. However, they were added to the list for completeness. 
 
 3. An empty line has been added after the tweets and before the unicode count for styling as in the example in the output.
 
 ## Assumptions for Feature Two
 
-1. All Hashtags with empty text after removing the unicode is considered the same node.
+1. All hashtags with empty text after removing the unicode is considered the same node.
 
 2. The 60 seconds window given is exclusive (tweets that are older than or equal to 60 seconds from the new tweet are evicted).
 
@@ -40,9 +40,11 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
 There are two noteworthy possible sources of error.
 
 1. JSON Parsing Errors
+
    JSON lines that cannot be parsed are skipped and logged into ./log/log.txt and the program continues to run as normal. This is in response to the various limit JSON lines that were in the example tweets.txt. Though the test input won't have such lines, it seems like it would be best practice to leave in this error handling for future use.
 
 2. Graph Edge/Node Removal Errors
+
    If the program attemps to remove an edge that is non-existent, the program crashes. This is the intended behavior, as this means that the graph data is corrupt and any future rolling average calculation will be inaccurate. This error should not happen in general, but is something to be aware of.
 
 For both of these errors, a message will be written into ./log/log.txt for debugging. 
