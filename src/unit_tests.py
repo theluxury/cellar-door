@@ -147,7 +147,7 @@ class GraphMethods(unittest.TestCase):
 
     def test_edge_errors(self):
         average_degree.increment_edge(1, 2, self.graph)
-        self.assertRaises(networkx.exception.NetworkXError, average_degree.decrement_edge, 1, 3, self.graph)
+        self.assertRaises(TypeError, average_degree.decrement_edge, 1, 3, self.graph)
 
         self.num_edge_and_nodes_assert(2, 1, self.graph)
         self.assertEqual([1, 2], self.graph.nodes())

@@ -38,20 +38,16 @@ def format_and_print_averages(tweets):
         print avg_edges_per_node(graph)
 
 
-def avg_edges_per_node(graph):
-    if graph.number_of_nodes():
-        return "%.2f" % (graph.number_of_edges() * 2 / float(graph.number_of_nodes()))
-    else:
-        return 0.00
-
-
 def update_graph_and_deque(tweet, graph, deque, seconds_to_go_back):
     # TODO: is this what we want this to do?
         # Remove empty hashtags.
     if "" in tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]:
         tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY].remove("")
 
-    add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque)
+    # since the hashtags have been encoded to ascii and made unique, this should only increment the edge
+    # if and only if tweet had set of >=2 hashtags.
+    if len(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]) >= 2:
+        add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque)
     # Even if tweet does not have >=2 unique hashtags, still use to remove old tweets.
     time_limit = date_parse(tweet[config.TWEET_DICTIONARY_DATE_TIME_KEY]) \
         - relativedelta(seconds=seconds_to_go_back)
@@ -61,10 +57,14 @@ def update_graph_and_deque(tweet, graph, deque, seconds_to_go_back):
 def add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque):
     # since the hashtags have been encoded to ascii and made unique, this should only increment the edge
     # if and only if tweet had set of >=2 hashtags.
-    if len(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]) >= 2:
-        for x, y in itertools.combinations(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY], 2):
-            increment_edge(x, y, graph)
-        deque.append(tweet)
+    for x, y in itertools.combinations(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY], 2):
+        increment_edge(x, y, graph)
+    deque.append(tweet)
+
+
+def increment_edge(x, y, graph):
+    weight = graph.get_edge_data(x, y, {'weight': 0})["weight"]
+    graph.add_edge(x, y, weight=weight + 1)
 
 
 def remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, deque):
@@ -75,14 +75,17 @@ def remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, dequ
             decrement_edge(x, y, graph)
 
 
-def increment_edge(x, y, graph):
-    weight = graph.get_edge_data(x, y, {'weight': 0})["weight"]
-    graph.add_edge(x, y, weight=weight + 1)
-
-
 def decrement_edge(x, y, graph):
-    # No error here if no edge exists because of default value.
-    weight = graph.get_edge_data(x, y, {'weight': 1})["weight"]
+    # TODO: Think about this a little more.
+    # This raises an error if there is no such edge.
+    # This is desired behavior since that means something went wrong.
+    try:
+        weight = graph.get_edge_data(x, y)["weight"]
+    except TypeError:
+        error_msg = "Tried to decrement edge (%s, %s) that doesn't exist. " \
+                                               "Something went wrong, check the input data." % (x, y)
+        config.logger.error(error_msg)
+        raise TypeError(error_msg)
     if weight == 1:
         graph.remove_edge(x, y)
         for node in [x, y]:
@@ -95,6 +98,12 @@ def check_node_for_removal(node, graph):
     if not graph.neighbors(node):
         graph.remove_node(node)
 
+
+def avg_edges_per_node(graph):
+    if graph.number_of_nodes():
+        return "%.2f" % (graph.number_of_edges() * 2 / float(graph.number_of_nodes()))
+    else:
+        return 0.00
 
 if __name__ == '__main__':
     main()
