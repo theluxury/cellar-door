@@ -141,10 +141,7 @@ class GraphMethods(unittest.TestCase):
         average_degree.increment_edge(1, 2, self.graph)
         # the following should fail, but also shouldn't raise an exception, since I want it to be handled
         # and not cause errors.
-        try:
-            average_degree.decrement_edge(1, 3, self.graph)
-        except Exception:
-            self.fail("Received an expcetion when trying to decement non existing edge.")
+        self.assertRaises(networkx.exception.NetworkXError, average_degree.decrement_edge, 1, 3, self.graph)
 
         self.num_edge_and_nodes_assert(2, 1, self.graph)
         self.assertEqual([1, 2], self.graph.nodes())

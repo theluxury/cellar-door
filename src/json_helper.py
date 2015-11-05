@@ -80,7 +80,6 @@ def format_primitive_value(value, request):
     return value
 
 
-# TODO: test all functions
 def make_unique(input_list):
     placeholder_set = set()
     try:
@@ -108,7 +107,6 @@ def nested_json_fields_value(tweet_json, nested_json_fields):
         return value
     elif isinstance(value, list):
         # array of nested json objects or lists, recurse while adding to list.
-        # TODO: This might not work if list of a list? Think that's fine, twitter JSON not that dumb.
         response_list = []
         for item in value:
             response_list.append(nested_json_fields_value(item, nested_json_fields[1:]))

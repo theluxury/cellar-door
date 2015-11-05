@@ -13,20 +13,27 @@ _TIME_LIMIT_IN_SECONDS = 60
 
 
 def main():
+    tweets = get_tweets_hashtags_and_time(sys.argv[1])
+    #TODO: Can remove this sort for performance since they said they'd sort it.
+    # sorted_tweets = sorted(tweets, key=lambda t: t[config.TWEET_DICTIONARY_DATE_TIME_KEY])
+    format_and_print_averages(tweets)
+
+
+def get_tweets_hashtags_and_time(filename):
     request1 = json_helper.JsonRequestSingle(config.TWEET_DICTIONARY_DATE_TIME_KEY,
                                              config.TWEET_JSON_DATE_TIME_LOCATION)
     request2 = json_helper\
         .JsonRequestList(config.TWEET_DICTIONARY_HASHTAGS_KEY, config.TWEET_JSON_HASHTAGS_LOCATION,
                          require_lower_case=True, require_ascii_format=True,
                          require_unique_elements=True)
-    tweets = json_helper.parse_tweets(sys.argv[1], [request1, request2])
-    #TODO: Can remove this sort for performance since they said they'd sort it.
-    sorted_tweets = sorted(tweets, key=lambda t: t[config.TWEET_DICTIONARY_DATE_TIME_KEY])
+    return json_helper.parse_tweets(filename, [request1, request2])
 
+
+def format_and_print_averages(tweets):
     # deque to check for how many edges to remove when adding new tweet.
     deque = collections.deque()
     graph = networkx.Graph()
-    for tweet in sorted_tweets:
+    for tweet in tweets:
         update_graph_and_deque(tweet, graph, deque, _TIME_LIMIT_IN_SECONDS)
         print avg_edges_per_node(graph)
 
@@ -79,6 +86,7 @@ def decrement_edge(x, y, graph):
     if weight == 1:
         # error here if no such edge or node. Reason for three try loops is want to remove nodes for accuracy
         # even if it doesn't have edge.
+        # TODO: Don't catch this error, and fix it in the unit test.
         try:
             graph.remove_edge(x, y)
         except networkx.exception.NetworkXError:
