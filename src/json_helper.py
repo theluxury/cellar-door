@@ -4,7 +4,6 @@ import config
 
 # Don't instantiate this one directly.
 class _JsonRequestBase(object):
-
     def __init__(self, key, json_chain, require_lower_case=False, require_ascii_format=False):
         self.key = key
         self.json_chain = json_chain
@@ -36,7 +35,9 @@ def parse_tweets(filename, requests_list):
             for request in requests_list:
                 try:
                     value = nested_json_fields_value(tweet_json, request.json_chain)
-                except ValueError:  # this usually happens if the json is missing a vital field.
+                except ValueError:
+                    # this usually happens if the json is missing a vital field or if we got a wrong json line.
+                    # behavior now is just to skip the line.
                     ignore_tweet = True
                     break
                 value = format_value(value, request)
@@ -48,52 +49,6 @@ def parse_tweets(filename, requests_list):
                 tweets.append(tweet)
 
         return tweets
-
-
-def format_value(value, request):
-    if isinstance(request, JsonRequestSingle):
-        return format_primitive_value(value, request)
-    elif isinstance(request, JsonRequestList):
-        return format_list_value(value, request)
-    else:
-        raise ValueError("Got an odd JSON format request object.")
-
-
-def format_list_value(values_list, request):
-    placeholder_list = []
-    for value in values_list:
-        placeholder_list.append(format_primitive_value(value, request))
-
-    if request.require_unique_elements:
-        placeholder_list = make_unique(placeholder_list)
-
-    return placeholder_list
-
-
-def format_primitive_value(value, request):
-    if isinstance(value, basestring):
-        if request.require_lower_case:
-            value = value.lower()
-        if request.require_ascii_format:
-            value = make_ascii(value)
-
-    return value
-
-
-def make_unique(input_list):
-    placeholder_set = set()
-    try:
-        for item in input_list:
-            placeholder_set.add(item)
-    except TypeError:
-        raise TypeError("Could not make elements in list unique. "
-                        "This is usually because the elements are not hashable.")
-
-    return list(placeholder_set)
-
-
-def make_ascii(text):
-    return text.encode('ascii', errors='ignore')
 
 
 def nested_json_fields_value(tweet_json, nested_json_fields):
@@ -113,3 +68,49 @@ def nested_json_fields_value(tweet_json, nested_json_fields):
         return response_list
     else:
         return nested_json_fields_value(value, nested_json_fields[1:])
+
+
+def format_value(value, request):
+    if isinstance(request, JsonRequestSingle):
+        return format_primitive_value(value, request)
+    elif isinstance(request, JsonRequestList):
+        return format_list_value(value, request)
+    else:
+        raise ValueError("Got an odd JSON format request object.")
+
+
+def format_primitive_value(value, request):
+    if isinstance(value, basestring):
+        if request.require_lower_case:
+            value = value.lower()
+        if request.require_ascii_format:
+            value = make_ascii(value)
+
+    return value
+
+
+def format_list_value(values_list, request):
+    placeholder_list = []
+    for value in values_list:
+        placeholder_list.append(format_primitive_value(value, request))
+
+    if request.require_unique_elements:
+        placeholder_list = make_unique(placeholder_list)
+
+    return placeholder_list
+
+
+def make_unique(input_list):
+    placeholder_set = set()
+    try:
+        for item in input_list:
+            placeholder_set.add(item)
+    except TypeError:
+        raise TypeError("Could not make elements in list unique. "
+                        "This is usually because the elements are not hashable.")
+
+    return list(placeholder_set)
+
+
+def make_ascii(text):
+    return text.encode('ascii', errors='ignore')

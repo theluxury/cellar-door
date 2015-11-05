@@ -5385,3 +5385,10 @@
 2015-11-04 23:36:16.632 WARNING json_helper - nested_json_fields_value: Could not find value created_at in {u'limit': {u'track': 3402, u'timestamp_ms': u'1446219176821'}}, skipping.
 2015-11-04 23:36:16.632 WARNING json_helper - nested_json_fields_value: Could not find value created_at in {u'limit': {u'track': 3385, u'timestamp_ms': u'1446219176840'}}, skipping.
 2015-11-04 23:36:16.632 WARNING json_helper - nested_json_fields_value: Could not find value created_at in {u'limit': {u'track': 3452, u'timestamp_ms': u'1446219176854'}}, skipping.
+2015-11-05 12:03:52.338 ERROR average_degree - decrement_edge: Tried to decrement edge (1, 3) that doesn't exist. Something went wrong: check the input data.
+2015-11-05 12:03:52.338 ERROR average_degree - decrement_edge: Tried to decrement edge (1, 2) that doesn't exist. Something went wrong: check the input data.
+2015-11-05 12:03:52.339 WARNING json_helper - nested_json_fields_value: Could not find value text in hashtag1, skipping.
+2015-11-05 12:03:52.339 WARNING json_helper - nested_json_fields_value: Could not find value rext in {'text': 'hashtag1'}, skipping.
+2015-11-05 12:03:52.339 WARNING json_helper - nested_json_fields_value: Could not find value text in {'entities': [{'hashtags': {'wrong_key': 'hashtag1'}}, {'wrong_key': {'text': 'hashtag2'}}], 'wrong_key': 'sample text'}, skipping.
+2015-11-05 12:03:52.339 WARNING json_helper - nested_json_fields_value: Could not find value created_at in {'entities': [{'hashtags': {'wrong_key': 'hashtag1'}}, {'wrong_key': {'text': 'hashtag2'}}], 'wrong_key': 'sample text'}, skipping.
+2015-11-05 12:03:52.340 WARNING json_helper - nested_json_fields_value: Could not find value text in {'wrong_key': 'hashtag1'}, skipping.

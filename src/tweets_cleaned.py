@@ -8,8 +8,8 @@ import config
 Performance notes:
 Tried decoded = filter(lambda x: x in string.printable, tweet["text"]) for decoding, but that was much slower
 Also, the .replace chains to replace escape characters is considered the pythonic way to replace multiple characters.
-If performance is slower, could consider for other ways, such as for ch in ['\r\n', '\r', ...]
-Go to http://stackoverflow.com/questions/3411771/multiple-character-replace-with-python for a fairly exahustive list.
+If performance is slow, could consider for other ways, such as for ch in ['\r\n', '\r', ...]
+Go to http://stackoverflow.com/questions/3411771/multiple-character-replace-with-python for a fairly exhaustive list.
 """
 
 
@@ -28,7 +28,8 @@ def get_tweets_text_and_time(filename):
 def format_and_print_tweets(tweets):
     count = 0
     for tweet in tweets:
-        # TODO: Make note of fact json.loads get rid of a lot of escapes in readme
+        # the json library already takes care of many escapes like \\ and \". All that remains is to
+        # remove the whitespace escapes.
         escapes_removed_string = remove_whitespace_escapes(tweet[config.TWEET_DICTIONARY_TEXT_KEY])
         # normally could actually make ascii in request, but doing it here for count.
         decoded_string = json_helper.make_ascii(escapes_removed_string)
@@ -42,6 +43,7 @@ def format_and_print_tweets(tweets):
 
 
 def remove_whitespace_escapes(original_string):
+    # this takes c
     return original_string.replace("\r\n", " ").replace("\r", " ").replace("\n", " ") \
         .replace("\t", " ").replace("\b", " ").replace("\v", " ")
 

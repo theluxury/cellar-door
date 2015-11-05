@@ -22,7 +22,7 @@ def main():
 def get_tweets_hashtags_and_time(filename):
     request1 = json_helper.JsonRequestSingle(config.TWEET_DICTIONARY_DATE_TIME_KEY,
                                              config.TWEET_JSON_DATE_TIME_LOCATION)
-    request2 = json_helper\
+    request2 = json_helper \
         .JsonRequestList(config.TWEET_DICTIONARY_HASHTAGS_KEY, config.TWEET_JSON_HASHTAGS_LOCATION,
                          require_lower_case=True, require_ascii_format=True,
                          require_unique_elements=True)
@@ -40,7 +40,7 @@ def format_and_print_averages(tweets):
 
 def update_graph_and_deque(tweet, graph, deque, seconds_to_go_back):
     # TODO: is this what we want this to do?
-        # Remove empty hashtags.
+    # Remove empty hashtags.
     if "" in tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]:
         tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY].remove("")
 
@@ -50,7 +50,7 @@ def update_graph_and_deque(tweet, graph, deque, seconds_to_go_back):
         add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque)
     # Even if tweet does not have >=2 unique hashtags, still use to remove old tweets.
     time_limit = date_parse(tweet[config.TWEET_DICTIONARY_DATE_TIME_KEY]) \
-        - relativedelta(seconds=seconds_to_go_back)
+                 - relativedelta(seconds=seconds_to_go_back)
     remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, deque)
 
 
@@ -68,7 +68,9 @@ def increment_edge(x, y, graph):
 
 
 def remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, deque):
-    while deque and date_parse(deque[0][config.TWEET_DICTIONARY_DATE_TIME_KEY]) < time_limit:
+    # TODO: This means exlusive, right?
+    # TODO: Add tests for exclusitivity and the new empty hashtags. 
+    while deque and date_parse(deque[0][config.TWEET_DICTIONARY_DATE_TIME_KEY]) <= time_limit:
         # removes from head until we get one less than 1 minute prior.
         stale_tweet = deque.popleft()
         for x, y in itertools.combinations(stale_tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY], 2):
@@ -76,17 +78,16 @@ def remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, dequ
 
 
 def decrement_edge(x, y, graph):
-    # TODO: Think about this a little more.
-    # TODO: reorder methods in the files.
     # TODO: Maybe document tests a bit.
-    # This raises an error if there is no such edge.
-    # This is desired behavior since that means something went wrong.
+    # TODO: Document, uh...error handling. Yeah, that.
+    # Designed to crash if we try to decement an edge that doesn't exist.
+    # This is designed behavior since that means rolling average is not accurate.
     try:
         weight = graph.get_edge_data(x, y)["weight"]
     except TypeError:
         error_msg = "Tried to decrement edge (%s, %s) that doesn't exist. " \
-                                               "Something went wrong: check the input data." % (x, y)
-        config.logger.error(error_msg)
+                    "Something went wrong: check the input data." % (x, y)
+        config.logger.critical(error_msg)
         raise TypeError(error_msg)
     if weight == 1:
         graph.remove_edge(x, y)
@@ -106,6 +107,7 @@ def avg_edges_per_node(graph):
         return "%.2f" % (graph.number_of_edges() * 2 / float(graph.number_of_nodes()))
     else:
         return "%.2f" % 0.00
+
 
 if __name__ == '__main__':
     main()
