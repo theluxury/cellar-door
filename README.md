@@ -78,7 +78,12 @@ Currently covers the following:
 Contains two e2e tests, one for each feature. The input tweets haven been chosen to try to test for all edge cases that may arise from escapes, unicode, duplicate hashtags, etc. 
 
 
-### Donald Trump
+### Future To Test
+
+All the tweets were +0000 timezone offset, so behavior with tweets of different offsets in untested. Dateutil should deal with this intelligently, but is definitely something to keep in mind.  
+
+
+## Donald Trump
 
 Donald Trump's last name is used frequently for sample hashtags, as #Trump appeared in the first tweet from tweets.txt to contain a hashtag, and I thought it would be both topical and humorous to keep using it. Note that this does not mean I support him, his party, nor the wall.   
 

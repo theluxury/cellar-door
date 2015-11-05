@@ -68,8 +68,6 @@ def remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, dequ
 
 
 def decrement_edge(x, y, graph):
-    # TODO: Maybe document tests a bit.
-    # TODO: Document, uh...error handling. Yeah, that.
     # Designed to crash if we try to decement an edge that doesn't exist.
     # This is designed behavior since that means rolling average is not accurate.
     try:
