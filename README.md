@@ -9,6 +9,7 @@ Mark Wang's Entry for Insight Data Engineering - Coding Challenge
 
 Both are included in requirements.txt. Simply run pip install -r requirements.txt to install them. 
 
+
 ## Assumptions for Feature One
 
 1. Tweets with empty text after unicode has been removed will still be printed in \<text> (date) format with empty text.
@@ -25,6 +26,7 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
 
 3. An empty line has been added after the tweets and before the unicode count for styling as in the example in the output.
 
+
 ## Assumptions for Feature Two
 
 1. All hashtags with empty text after removing the unicode is considered the same node.
@@ -34,6 +36,7 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
 3. If the graph contains no edges and no nodes, then the output with be 0.00.
 
 4. The tweet inputs will be sorted chronologically, as stated in the FAQ. If for whatever reason they are not, my code will work if line 18 in average_degree.py is uncommented and tweets in line 19 is replace with sorted_tweets. 
+
 
 ## Error Handling
 
@@ -45,32 +48,39 @@ There are two noteworthy possible sources of error.
 
 2. Graph Edge/Node Removal Errors
 
-   If the program attemps to remove an edge that is non-existent, the program crashes. This is the intended behavior, as this means that the graph data is corrupt and any future rolling average calculation will be inaccurate. This error should not happen in general, but is something to be aware of.
+   The program will crash if it attempts to remove an edge that is non-existent. This is the intended behavior, as this error means that the graph data is corrupt and any future rolling average calculation will be inaccurate. This error should not happen in general, but is something to be aware of.
 
 For both of these errors, a message will be written into ./log/log.txt for debugging. 
 
+
 ## Tests
 
-A suite of unit and e2e tests have been included. Note that the inputs for the tests are not real tweets in the sense they only contain keys necessary for our tests. This was done for easier readability as real tweet json is hard to read. Unit tests inputs are coded directly in ./src/unit_test.py while e2e_test.py inputs are in ./test_files. This was done to to better replcate fact the real program reads from a .txt file.
+A suite of unit and e2e tests have been included. Note that the inputs for these tests are not real tweets in the sense they only contain keys necessary for our tests. This was done for easier readability as real tweet json is hard to read. Unit tests inputs are coded directly in ./src/unit_test.py while e2e_test.py inputs are in ./test_files. This was done to to better replcate fact the real program reads from a .txt file.
+
 
 ### Unit Tests
 
-The suite of tests included currently
+Currently covers the following:
 
 1. JSON parsing and error handling.
+
 2. Formatting of the values once parsed. This includes
   * Making hashtags lower case
   * Removing unicode
   * Replacing escapes.
   * Removing duplicate hashtags from tweets (includes hashtags that become identical after removing unicode).
+
 3. Graph and deque arithmetic to ensure edge, node, and deque counts are consistent with requirements.
+
 
 ### E2E Tests
 
 Contains two e2e tests, one for each feature. The input tweets haven been chosen to try to test for all edge cases that may arise from escapes, unicode, duplicate hashtags, etc. 
 
+
 ### Donald Trump
 
 Donald Trump's last name is used frequently for sample hashtags, as #Trump appeared in the first tweet from tweets.txt to contain a hashtag, and I thought it would be both topical and humorous to keep using it. Note that this does not mean I support him, his party, nor the wall.   
+
 
 Please send any comments or questions to Mark Wang at zhengkaw@gmail.com
