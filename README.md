@@ -20,6 +20,7 @@ Both are included in requirements.txt. Simply run pip install -r requirements.tx
   * \t
   * \v
   * \b
+  
     Note that performance can be slightly improved by trimming this list, as none of the example tweets actually had \t \v or \b in them. However, they were added to the list for completness. 
 
 3. An empty line has been added after the tweets and before the unicode count for styling as in the example in the output.
@@ -68,6 +69,6 @@ Contains two e2e tests, one for each feature. The input tweets haven been chosen
 
 ### Donald Trump
 
-Donald Trump's last name is used frequently for sample hashtags, as #Trump appeared in the first tweet from tweets.txt to contain a hashtag, and I thought it would be both topical and humorous to keep using it. Note that this does not mean I support him, his parties, or the wall.   
+Donald Trump's last name is used frequently for sample hashtags, as #Trump appeared in the first tweet from tweets.txt to contain a hashtag, and I thought it would be both topical and humorous to keep using it. Note that this does not mean I support him, his party, nor the wall.   
 
 Please send any comments or questions to Mark Wang at zhengkaw@gmail.com
