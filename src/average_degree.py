@@ -39,24 +39,16 @@ def format_and_print_averages(tweets):
 
 
 def update_graph_and_deque(tweet, graph, deque, seconds_to_go_back):
-    # TODO: is this what we want this to do?
-    # Remove empty hashtags.
-    if "" in tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]:
-        tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY].remove("")
-
     # since the hashtags have been encoded to ascii and made unique, this should only increment the edge
     # if and only if tweet had set of >=2 hashtags.
     if len(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY]) >= 2:
         add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque)
     # Even if tweet does not have >=2 unique hashtags, still use to remove old tweets.
-    time_limit = date_parse(tweet[config.TWEET_DICTIONARY_DATE_TIME_KEY]) \
-                 - relativedelta(seconds=seconds_to_go_back)
+    time_limit = date_parse(tweet[config.TWEET_DICTIONARY_DATE_TIME_KEY]) - relativedelta(seconds=seconds_to_go_back)
     remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, deque)
 
 
 def add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque):
-    # since the hashtags have been encoded to ascii and made unique, this should only increment the edge
-    # if and only if tweet had set of >=2 hashtags.
     for x, y in itertools.combinations(tweet[config.TWEET_DICTIONARY_HASHTAGS_KEY], 2):
         increment_edge(x, y, graph)
     deque.append(tweet)
@@ -68,8 +60,6 @@ def increment_edge(x, y, graph):
 
 
 def remove_old_hashtags_from_graph_and_tweets_from_deque(time_limit, graph, deque):
-    # TODO: This means exlusive, right?
-    # TODO: Add tests for exclusitivity and the new empty hashtags. 
     while deque and date_parse(deque[0][config.TWEET_DICTIONARY_DATE_TIME_KEY]) <= time_limit:
         # removes from head until we get one less than 1 minute prior.
         stale_tweet = deque.popleft()

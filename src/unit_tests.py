@@ -161,25 +161,24 @@ class GraphIntegration(unittest.TestCase):
         # so make some tweets, and then test with update.
         self.tweet1 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", [])
         self.tweet2 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", ["a"])
-        self.tweet3 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", ["b", ""])
-
-        self.tweet4 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", ["a", "b"])
+        self.tweet3 = self.make_tweet("Thu Oct 29 00:00:00 +0000 2015", ["a", "b"])
         # a <-> b
-        self.tweet5 = self.make_tweet("Thu Oct 29 00:00:10 +0000 2015", ["b", "c"])
-        # a <-> b <-> c
-        self.tweet6 = self.make_tweet("Thu Oct 29 00:00:20 +0000 2015", ["a", "b"])
-        # a <2->b <-> c
 
-        self.tweet7 = self.make_tweet("Thu Oct 29 00:01:01 +0000 2015", [])
-        # a <-> b <-> c
-        self.tweet8 = self.make_tweet("Thu Oct 29 00:01:11 +0000 2015", ["b", "c"])
-        # a <-> b <-> c
-        self.tweet9 = self.make_tweet("Thu Oct 29 00:01:21 +0000 2015", ["b"])
-        # b <-> c
-        self.tweet10 = self.make_tweet("Thu Oct 29 00:01:21 +0000 2015", ["d", "e"])
+        self.tweet4 = self.make_tweet("Thu Oct 29 00:00:10 +0000 2015", ["b", ""])
+        # a <-> b <-> empty
+        self.tweet5 = self.make_tweet("Thu Oct 29 00:00:20 +0000 2015", ["a", "b"])
+        # a <2->b <-> empty
+
+        self.tweet6 = self.make_tweet("Thu Oct 29 00:01:00 +0000 2015", [])
+        # a <-> b <-> empty
+        self.tweet7 = self.make_tweet("Thu Oct 29 00:01:10 +0000 2015", ["b", ""])
+        # a <-> b <-> empty
+        self.tweet8 = self.make_tweet("Thu Oct 29 00:01:20 +0000 2015", ["b"])
+        # b <-> empty
+        self.tweet9 = self.make_tweet("Thu Oct 29 00:01:25 +0000 2015", ["d", "e"])
         # b <-> c, d <-> e
 
-        self.tweet11 = self.make_tweet("Thu Oct 29 00:03:00 +0000 2015", ["b"])
+        self.tweet10 = self.make_tweet("Thu Oct 29 00:03:00 +0000 2015", ["b"])
         # none.
 
         self.graph = networkx.Graph()
@@ -193,26 +192,24 @@ class GraphIntegration(unittest.TestCase):
         self.graph_and_deque_assert(0, 0, self.graph, 0, self.deque)
         average_degree.update_graph_and_deque(self.tweet2, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
         self.graph_and_deque_assert(0, 0, self.graph, 0, self.deque)
-        average_degree.update_graph_and_deque(self.tweet3, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
-        self.graph_and_deque_assert(0, 0, self.graph, 0, self.deque)
 
-        average_degree.update_graph_and_deque(self.tweet4, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        average_degree.update_graph_and_deque(self.tweet3, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
         self.graph_and_deque_assert(2, 1, self.graph, 1, self.deque)
-        average_degree.update_graph_and_deque(self.tweet5, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        average_degree.update_graph_and_deque(self.tweet4, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
         self.graph_and_deque_assert(3, 2, self.graph, 2, self.deque)
-        average_degree.update_graph_and_deque(self.tweet6, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        average_degree.update_graph_and_deque(self.tweet5, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
         self.graph_and_deque_assert(3, 2, self.graph, 3, self.deque)
 
+        average_degree.update_graph_and_deque(self.tweet6, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        self.graph_and_deque_assert(3, 2, self.graph, 2, self.deque)
         average_degree.update_graph_and_deque(self.tweet7, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
         self.graph_and_deque_assert(3, 2, self.graph, 2, self.deque)
         average_degree.update_graph_and_deque(self.tweet8, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
-        self.graph_and_deque_assert(3, 2, self.graph, 2, self.deque)
-        average_degree.update_graph_and_deque(self.tweet9, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
         self.graph_and_deque_assert(2, 1, self.graph, 1, self.deque)
 
-        average_degree.update_graph_and_deque(self.tweet10, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        average_degree.update_graph_and_deque(self.tweet9, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
         self.graph_and_deque_assert(4, 2, self.graph, 2, self.deque)
-        average_degree.update_graph_and_deque(self.tweet11, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
+        average_degree.update_graph_and_deque(self.tweet10, self.graph, self.deque, self._TIME_LIMIT_IN_SECONDS)
         self.graph_and_deque_assert(0, 0, self.graph, 0, self.deque)
 
     def make_tweet(self, created_at, hashtags):
