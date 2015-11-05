@@ -84,7 +84,7 @@ avg should be 6 * 7 + 1 * 1 + 2 * 2 + 3 * 1 / 11 = 4.55
 
 tweet7: {"created_at":"Fri Oct 30 00:00:30 +0000 2015", "hashtags": ["\u00e7trU\u00e7Mp", "\u4e45\u5bff\u5ddd"]}
 avg should be 6 * 7 + 1 * 1 + 1 * 1 + 2 * 2 + 4 * 1 / 11 = 4.33
-tweet8: {"created_at":"Fri Oct 30 00:00:40 +0000 2015", "hashtags": ["\u00e7tRu\u00e7mP", "\u4e05\u5cff"]}
+tweet8: {"created_at":"Fri Oct 30 00:00:40 +0000 2015", "hashtags": ["TR\u00a2u\u00b4mP", "\u4e05\u5cff"]}
 avg should still be be 6 * 7 + 1 * 1 + 1 * 1 + 2 * 2 + 4 * 1 / 11 = 4.33
 
 tweet9: {"created_at":"Fri Oct 30 00:01:00 +0000 2015", "hashtags": ["a", "b"]}
