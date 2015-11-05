@@ -67,7 +67,7 @@ class TestFormatterMethods(unittest.TestCase):
         self.list_case_and_unicode_strings = \
             [u"i'm at terMinAl De Integra\u00e7\u00e3o do varAdouro in Jo\u00e3o pEssoa",
              u"I'm at Terminal de Integra\u00e2\u00f4o do Varadouro in Jo\u00b6o Pessoa"]
-        self.list_unicode_only_strings = ["", u"\u00e7\u00e3\u00c3\u00d2"]
+        self.list_unicode_only_strings = ["", u"\u00e7\u00e3\u00c3\u00d2", u"\u00b2\u00c8"]
         self.list_make_lower_and_unique = json_helper.JsonRequestList("dummy", "dummy",
                                                                       require_lower_case=True,
                                                                       require_unique_elements=True)
@@ -87,7 +87,7 @@ class TestFormatterMethods(unittest.TestCase):
                          json_helper.format_value(self.unicode_string, self.make_lower_and_ascii_request))
 
     def test_list_request_format(self):
-        # so need to test unique with ascii, case, and... empty.
+        # Need to test unique with ascii, case, and... empty.
         self.assertEqual(["abcde"], json_helper.format_value(self.list_case_strings, self.list_make_lower_and_unique))
         self.assertEqual(["I'm at Terminal de Integrao do Varadouro in Joo Pessoa"],
                          json_helper.format_value(self.list_unicode_strings, self.list_make_ascii_and_unique))

@@ -6,6 +6,9 @@ import os.path
 
 """
 Raw JSON for tweets_cleaned_test:
+First tweet to ensure wrong json does not break the program.
+tweet0: {"wrong_key": "wrong_text"}
+
 tweet1: {"created_at": "Thu Oct 29 18:10:49 +0000 2015", "text":
 "I'm at Terminal de Integra\u00e7\u00e3o do Varadouro in Jo\u00e3o Pessoa, PB https:\/\/t.co\/HOl34REL1a"}
 
@@ -61,32 +64,36 @@ class TweetsCleanedTest(unittest.TestCase):
 
 """
 Raw JSON for averag_degree_test
-First three make sure don't do anything
-tweet1: {"created_at":"Fri Oct 30 00:00:00 +0000 2015", "hashtags": ["Trump"]}
-tweet2: {"created_at":"Fri Oct 30 00:00:00 +0000 2015", "hashtags": []}
+First tweet to ensure wrong json does not break the program.
+tweet0: {"wrong_key": "wrong_text"}
 
-tweet3: {"created_at":"Fri Oct 30 00:00:00 +0000 2015", "hashtags": ["Trump", "Election", "News"]}
+tweet1: {"created_at":"Fri Oct 30 00:00:00 +0000 2015", "hashtags": ["Trump", "truMP]}
+tweet2: {"created_at":"Fri Oct 30 00:00:00 +0000 2015", "hashtags": ["Trump"]}
+tweet3: {"created_at":"Fri Oct 30 00:00:00 +0000 2015", "hashtags": []}
+avg should be 0.00
+
+tweet4: {"created_at":"Fri Oct 30 00:00:00 +0000 2015", "hashtags": ["Trump", "Election", "News"]}
 avg should be 2.00
-tweet4: {"created_at":"Fri Oct 30 00:00:10 +0000 2015", "hashtags": ["hiring", "BusinessMgmt", "NettempsJobs",
+tweet5: {"created_at":"Fri Oct 30 00:00:10 +0000 2015", "hashtags": ["hiring", "BusinessMgmt", "NettempsJobs",
 "MenloPark", "Job", "Jobs", "CareerArc"]}
 avg should be (6 * 7 + 2 * 3) / 10 = 4.80
 
 
-tweet5: {"created_at":"Fri Oct 30 00:00:20 +0000 2015", "hashtags": ["tRuMp", "Rhonda"]}
+tweet6: {"created_at":"Fri Oct 30 00:00:20 +0000 2015", "hashtags": ["tRuMp", "Rhonda"]}
 avg should be 6 * 7 + 1 * 1 + 2 * 2 + 3 * 1 / 11 = 4.55
 
-tweet6: {"created_at":"Fri Oct 30 00:00:30 +0000 2015", "hashtags": ["\u00e7trU\u00e7Mp", "\u4e45\u5bff\u5ddd"]}
+tweet7: {"created_at":"Fri Oct 30 00:00:30 +0000 2015", "hashtags": ["\u00e7trU\u00e7Mp", "\u4e45\u5bff\u5ddd"]}
 avg should be 6 * 7 + 1 * 1 + 1 * 1 + 2 * 2 + 4 * 1 / 11 = 4.33
-tweet7: {"created_at":"Fri Oct 30 00:00:40 +0000 2015", "hashtags": ["\u00e7tRu\u00e7mP", "\u4e05\u5cff"]}
+tweet8: {"created_at":"Fri Oct 30 00:00:40 +0000 2015", "hashtags": ["\u00e7tRu\u00e7mP", "\u4e05\u5cff"]}
 avg should still be be 6 * 7 + 1 * 1 + 1 * 1 + 2 * 2 + 4 * 1 / 11 = 4.33
 
-tweet8: {"created_at":"Fri Oct 30 00:01:00 +0000 2015", "hashtags": ["a", "b"]}
+tweet9: {"created_at":"Fri Oct 30 00:01:00 +0000 2015", "hashtags": ["a", "b"]}
 avg should be 6 * 7 + 2 * 1 + 1 * 4 / 12 = 4.00
 
-tweet9: {"created_at":"Fri Oct 30 00:01:35 +0000 2015", "hashtags": []}
+tweet10: {"created_at":"Fri Oct 30 00:01:35 +0000 2015", "hashtags": []}
 avg should be 1 * 4 / 4 = 1.00
 
-tweet10: {"created_at":"Fri Oct 30 00:03:00 +0000 2015", "hashtags": []}
+tweet11: {"created_at":"Fri Oct 30 00:03:00 +0000 2015", "hashtags": []}
 avg should be 0.00
 
 """
@@ -98,7 +105,7 @@ class AverageDegreeTest(unittest.TestCase):
             os.path.dirname(os.path.abspath(__file__))), "test_files"), "average_degree_test.txt")
         self.tweets = average_degree.get_tweets_hashtags_and_time(test_input_location)
 
-        self.expected_avg_array = [0.00, 0.00, 2.00, 4.80, 4.55, 4.33, 4.33, 4.00, 1.00, 0.00]
+        self.expected_avg_array = [0.00, 0.00, 0.00, 2.00, 4.80, 4.55, 4.33, 4.33, 4.00, 1.00, 0.00]
         self.expected_output = ""
         for expected_value in self.expected_avg_array:
             self.expected_output += "%.2f" % expected_value + "\n"
