@@ -55,7 +55,7 @@ def add_hashtags_to_graph_and_tweet_to_deque(tweet, graph, deque):
 
 
 def increment_edge(x, y, graph):
-    weight = graph.get_edge_data(x, y, {'weight': 0})["weight"]
+    weight = graph.get_edge_data(x, y, default={'weight': 0})["weight"]
     graph.add_edge(x, y, weight=weight + 1)
 
 
