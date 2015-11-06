@@ -55,7 +55,7 @@ For both of these errors, a message will be written into ./log/log.txt for debug
 
 ## Tests
 
-A suite of unit and e2e tests have been included. Note that the inputs for these tests are not real tweets in the sense they only contain keys necessary for our tests. This was done for easier readability as real tweet json is hard to read. Unit tests inputs are coded directly in ./src/unit_test.py while e2e_test.py inputs are in ./test_files. This was done to to better replcate fact the real program reads from a .txt file.
+A suite of unit and e2e tests have been included. Note that the inputs for these tests are not real tweets in the sense they only contain keys necessary for our tests. This was done for easier readability as real tweet json is hard to read. Unit tests inputs are coded directly in ./src/unit_test.py while e2e_test.py inputs are in ./test_files. This was done to to better replicate fact the real program reads from a .txt file.
 
 
 ### Unit Tests
@@ -80,7 +80,7 @@ Contains two e2e tests, one for each feature. The input tweets haven been chosen
 
 ### Future To Test
 
-All the tweets were +0000 timezone offset, so behavior with tweets of different offsets in untested. Dateutil should deal with this intelligently, but is definitely something to keep in mind. Also, the current e2e test input file system is not ideal, as it is possible to alter the files without altering the expected output and vice versa, leading to possible future confusion. Look into future solution of writing the input files from the test file itself. 
+All the tweets were +0000 timezone offset, so behavior with tweets of different offsets is untested. Dateutil should deal with this intelligently, but is definitely something to keep in mind. Also, the current e2e test input file system is not ideal, as it is possible to alter the files without altering the expected output and vice versa, leading to possible future confusion. Look into future solution of writing the input files from the test file itself. 
 
 
 ## Donald Trump
