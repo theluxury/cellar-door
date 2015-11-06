@@ -5,6 +5,9 @@ import average_degree
 import os.path
 
 """
+NOTE: There is currently no check that this text is the same as the input file. If a test fails in e2e, first check that
+the input file is still correct.
+
 Raw JSON for tweets_cleaned_test:
 First tweet to ensure wrong json does not break the program.
 tweet0: {"wrong_key": "wrong_text"}
