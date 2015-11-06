@@ -16,7 +16,7 @@ tweet1: {"created_at": "Thu Oct 29 18:10:49 +0000 2015", "text":
 "I'm at Terminal de Integra\u00e7\u00e3o do Varadouro in Jo\u00e3o Pessoa, PB https:\/\/t.co\/HOl34REL1a"}
 
 tweet2: {"created_at":"Thu Oct 29 17:51:51 +0000 2015",
-"text":"6A has decided to postpone final vote until appeals are heard by executive board. What seems set: 7 regions."}
+"text":"6A has decided to postpone \"final\" vote until appeals are heard by executive board. What seems set: 7 regions."}
 
 tweet3: {"created_at":"Thu Oct 29 18:10:49 +0000 2015",
 "text":"@i_am_sknapp Thanks for following us, Seth."}
@@ -43,7 +43,7 @@ class TweetsCleanedTest(unittest.TestCase):
         self.expected_text_array = [
             "I'm at Terminal de Integrao do Varadouro in Joo Pessoa, "  # tweet 1
             "PB https://t.co/HOl34REL1a (timestamp: Thu Oct 29 18:10:49 +0000 2015)",
-            "6A has decided to postpone final vote until appeals are heard by executive board. "  # tweet 2
+            "6A has decided to postpone \"final\" vote until appeals are heard by executive board. "  # tweet 2
             "What seems set: 7 regions. (timestamp: Thu Oct 29 17:51:51 +0000 2015)",
             "@i_am_sknapp Thanks for following us, Seth. (timestamp: Thu Oct 29 18:10:49 +0000 2015)",  # tweet 3
             "#Football Card Specialist - SDPW  Tips 170 Won 88 Profit +219.10 ROI 12.89%  "  # tweet 4

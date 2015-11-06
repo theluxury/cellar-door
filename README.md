@@ -80,7 +80,7 @@ Contains two e2e tests, one for each feature. The input tweets haven been chosen
 
 ### Future To Test
 
-All the tweets were +0000 timezone offset, so behavior with tweets of different offsets in untested. Dateutil should deal with this intelligently, but is definitely something to keep in mind.  
+All the tweets were +0000 timezone offset, so behavior with tweets of different offsets in untested. Dateutil should deal with this intelligently, but is definitely something to keep in mind. Also, the current e2e test input file system is not ideal, as it is possible to alter the files without altering the expected output and vice versa, leading to possible future confusion. Look into future solution of writing the input files from the test file itself. 
 
 
 ## Donald Trump
