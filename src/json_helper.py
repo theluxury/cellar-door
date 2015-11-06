@@ -95,7 +95,7 @@ def format_list_value(values_list, request):
         placeholder_list.append(format_primitive_value(value, request))
 
     # It's important that this happens after the formatting_primitive_values, since
-    # we might want to make unique element two elements that differ only in unicode or capitalization.
+    # we might want to make unique two elements that differ only in unicode or capitalization.
     if request.require_unique_elements:
         placeholder_list = make_unique(placeholder_list)
 
